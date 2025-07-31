@@ -1,0 +1,104 @@
+Script started on Fri Aug  1 01:58:22 2025
+[1m[7m%[27m[1m[0m                                                                                                                                                            [0m[27m[24m[Jnhanchau@192 part12 % [K[?2004hddocker ps[?2004l
+CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS         PORTS                     NAMES
+234e7d5ce8be   mongo     "docker-entrypoint.s…"   2 minutes ago   Up 2 minutes   0.0.0.0:3456->27017/tcp   todo-backend-mongo-1
+[1m[7m%[27m[1m[0m                                                                                                                                                            [0m[27m[24m[Jnhanchau@192 part12 % [K[?2004h[7mdocker exec[27m[11D[27md[27mo[27mc[27mk[27me[27mr[27m [27me[27mx[27me[27mc -it [7m234e7d5ce8be[27m[12D[27m2[27m3[27m4[27me[27m7[27md[27m5[27mc[27me[27m8[27mb[27me[?2004l
+docker: 'docker exec' requires at least 2 arguments
+
+Usage:  docker exec [OPTIONS] CONTAINER COMMAND [ARG...]
+
+See 'docker exec --help' for more information
+[1m[7m%[27m[1m[0m                                                                                                                                                            [0m[27m[24m[Jnhanchau@192 part12 % [K[?2004hdocker exec -it 234e7d5ce8be mongosh[?2004l
+]0;mongosh mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000Current Mongosh Log ID:	688bbd1392319e9ddc74e399
+Connecting to:		[1m[32mmongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.5.6[0m
+Using MongoDB:		8.0.12
+[1m[33mUsing Mongosh[0m:		2.5.6
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+
+To help improve our products, anonymous usage data is collected and sent to MongoDB periodically (https://www.mongodb.com/legal/privacy-policy).
+You can opt-out by running the disableTelemetry() command.
+
+[1G[0J [1G[?2004h[1G[0Jtest> [7Gshow dbs
+Uncaught [1m[31mMongoServerError[0m[1m[31m[Unauthorized][0m: Command listDatabases requires authentication
+[1G[0Jtest> [7G
+(To exit, press Ctrl+C again or Ctrl+D or type .exit)
+[1G[0Jtest> [7G.exit
+[?2004l[1m[7m%[27m[1m[0m                                                                                                                                                            [0m[27m[24m[Jnhanchau@192 part12 % [K[?2004hdocker exec -it 234e7d5ce8be mongosh -u [7mroot[27m[27mr[27mo[27mo[27mt -p [7mexample[27m[27me[27mx[27ma[27mm[27mp[27ml[27me [7m--authenticationDatabase admin the_database[27m[43D[27m-[27m-[27ma[27mu[27mt[27mh[27me[27mn[27mt[27mi[27mc[27ma[27mt[27mi[27mo[27mn[27mD[27ma[27mt[27ma[27mb[27ma[27ms[27me[27m [27ma[27md[27mm[27mi[27mn[27m [27mt[27mh[27me[27m_[27md[27ma[27mt[27ma[27mb[27ma[27ms[27me[?2004l
+]0;mongosh mongodb://<credentials>@127.0.0.1:27017/the_database?directConnection=true&serverSelectionTimeoutMS=2000&authSource=adminCurrent Mongosh Log ID:	688bbd885fb0ecb3d474e399
+Connecting to:		[1m[32mmongodb://<credentials>@127.0.0.1:27017/the_database?directConnection=true&serverSelectionTimeoutMS=2000&authSource=admin&appName=mongosh+2.5.6[0m
+Using MongoDB:		8.0.12
+[1m[33mUsing Mongosh[0m:		2.5.6
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+[1G[0J [1G[?2004h[1m[33m------[0m
+   [1m[33mThe server generated these startup warnings when booting[0m
+   2025-07-31T18:55:57.733+00:00: For customers running the current memory allocator, we suggest changing the contents of the following sysfsFile
+   2025-07-31T18:55:57.733+00:00: We suggest setting the contents of sysfsFile to 0.
+   2025-07-31T18:55:57.733+00:00: vm.max_map_count is too low
+   2025-07-31T18:55:57.733+00:00: We suggest setting swappiness to 0 or 1, as swapping can cause performance problems.
+[1m[33m------[0m
+
+[1G[0Jthe_database> [15G[1G[0Jthe_database> .exit[20G[1G[0Jthe_database> show dbs[23G
+[1madmin[0m         100.00 KiB
+[1mconfig[0m         60.00 KiB
+[1mlocal[0m          72.00 KiB
+[1mthe_database[0m   40.00 KiB
+[1G[0Jthe_database> [15G> show collections
+[1G[0J... [5G
+Uncaught:
+[1m[31mSyntaxError[0m: Unexpected token (1:0)
+
+[0m[31m[1m>[22m[39m[90m 1 |[39m [33m>[39m show collections
+ [90m   |[39m [31m[1m^[22m[39m
+ [90m 2 |[39m
+ [90m 3 |[39m[0m
+
+[1G[0Jthe_database> [15G[1G[0Jthe_database> > show collections[33G[18D[1C[1G[0Jthe_database>  show collections[15G[1C[1G[0Jthe_database> show collections[15G[16C
+[1mtodos[0m
+[1G[0Jthe_database> [15Gdb.todos.find({})
+[1G[0J... [5G
+[
+  {
+    _id: ObjectId([32m'688bbc3b56dc005f1874e39a'[39m),
+    text: [32m'Write code'[39m,
+    done: [33mtrue[39m
+  },
+  {
+    _id: ObjectId([32m'688bbc3b56dc005f1874e39b'[39m),
+    text: [32m'Learn about containers'[39m,
+    done: [33mfalse[39m
+  }
+]
+[1G[0Jthe_database> [15Gdb.todos.insertOne({
+[1G[0J... [5G  text: [32m"[39m[32mI[39m[32mn[39m[32mc[39m[32mr[39m[32me[39m[32ma[39m[32ms[39m[32me[39m [32mt[39m[32mh[39m[32me[39m [32mn[39m[32mu[39m[32mm[39m[32mb[39m[32me[39m[32mr[39m [32mo[39m[32mf[39m [32mt[39m[32mo[39m[32mo[39m[32ml[39m[32ms[39m [32mi[39m[32mn[39m [32mm[39m[32my[39m [32mt[39m[32mo[39m[32mo[39m[32ml[39m [32mb[39m[32me[39m[32ml[39m[32mt[39m[32m"[39m,
+[1G[0J... [5G  d[36mdo[39mdone: fals[33mfalse[39m
+[1G[0J... [5G})
+{
+  acknowledged: [33mtrue[39m,
+  insertedId: ObjectId([32m'688bbdcb5fb0ecb3d474e39a'[39m)
+}
+[1G[0Jthe_database> [15G[1G[0Jthe_database> })[17G[1G[0Jthe_database>   done: [33mfalse[39m[28G[1G[0Jthe_database>   text: [32m"Increase the number of tools in my tool belt"[39m,[70G[1G[0Jthe_database> db.todos.insertOne({[35G[1G[0Jthe_database> db.todos.find({})[32G[1G[0Jthe_database> db.todos.insertOne({[35G[1G[0Jthe_database> db.todos.find({})[32G
+[
+  {
+    _id: ObjectId([32m'688bbc3b56dc005f1874e39a'[39m),
+    text: [32m'Write code'[39m,
+    done: [33mtrue[39m
+  },
+  {
+    _id: ObjectId([32m'688bbc3b56dc005f1874e39b'[39m),
+    text: [32m'Learn about containers'[39m,
+    done: [33mfalse[39m
+  },
+  {
+    _id: ObjectId([32m'688bbdcb5fb0ecb3d474e39a'[39m),
+    text: [32m'Increase the number of tools in my tool belt'[39m,
+    done: [33mfalse[39m
+  }
+]
+[1G[0Jthe_database> [15G.exit
+[?2004l[1m[7m%[27m[1m[0m                                                                                                                                                            [0m[27m[24m[Jnhanchau@192 part12 % [K[?2004heexit[?2004l
+
+Script done on Fri Aug  1 02:02:47 2025

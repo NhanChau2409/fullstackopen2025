@@ -1,0 +1,99 @@
+Script started on Fri Aug  1 01:28:06 2025
+[1m[7m%[27m[1m[0m                                                                                                                                                           
+ 
+
+[0m[27m[24m[Jnhanchau@192 part12 % [K[?2004h[7mdocker run -it ubuntu bash[27m[26D[27md[27mo[27mc[27mk[27me[27mr[27m [27mr[27mu[27mn[27m [27m-[27mi[27mt[27m [27mu[27mb[27mu[27mn[27mt[27mu[27m [27mb[27ma[27ms[27mh[?2004l
+
+Unable to find image 'ubuntu:latest' locally
+latest: Pulling from library/ubuntu
+
+[1A[2K
+e3bd89a9dac5: Pulling fs layer 
+[1B[1A[2K
+e3bd89a9dac5: Downloading [=>                                                 ]  1.049MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [=>                                                 ]  1.049MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [===>                                               ]  2.097MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [===>                                               ]  2.097MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [=====>                                             ]  3.146MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [=====>                                             ]  3.146MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [=======>                                           ]  4.194MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [========>                                          ]  5.124MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [=========>                                         ]  5.243MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [==========>                                        ]  6.291MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [============>                                      ]   7.34MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [==============>                                    ]  8.389MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [================>                                  ]  9.437MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [==================>                                ]  10.49MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [=====================>                             ]  12.58MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [=======================>                           ]  13.63MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [===========================>                       ]  15.73MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [=============================>                     ]  16.78MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [================================>                  ]  18.87MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [==================================>                ]  19.92MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [====================================>              ]  20.97MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [=======================================>           ]  23.07MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [===========================================>       ]  25.17MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [=============================================>     ]  26.21MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Downloading [===============================================>   ]  27.26MB/28.86MB
+[1B[1A[2K
+e3bd89a9dac5: Download complete 
+[1B[1A[2K
+e3bd89a9dac5: Extracting 1 s
+[1B[1A[2K
+e3bd89a9dac5: Extracting 1 s
+[1B[1A[2K
+e3bd89a9dac5: Extracting 1 s
+[1B[1A[2K
+e3bd89a9dac5: Extracting 1 s
+[1B[1A[2K
+e3bd89a9dac5: Extracting 1 s
+[1B[1A[2K
+e3bd89a9dac5: Pull complete 
+[1BDigest: sha256:a08e551cb33850e4740772b38217fc1796a66da2506d312abe51acda354ff061
+Status: Downloaded newer image for ubuntu:latest
+[?2004h]0;root@667346d4e9dc: /root@667346d4e9dc:/# [7mmkdir /usr/src/app[27mmkdir /usr/src/app
+[?2004l
+[?2004h]0;root@667346d4e9dc: /root@667346d4e9dc:/# ls
+[?2004l
+[0m[01;36mbin[0m  [01;34mboot[0m  [01;34mdev[0m  [01;34metc[0m  [01;34mhome[0m  [01;36mlib[0m  [01;34mmedia[0m  [01;34mmnt[0m  [01;34mopt[0m  [01;34mproc[0m  [01;34mroot[0m  [01;34mrun[0m  [01;36msbin[0m  [01;34msrv[0m  [01;34msys[0m  [30;42mtmp[0m  [01;34musr[0m  [01;34mvar[0m
+[?2004h]0;root@667346d4e9dc: /root@667346d4e9dc:/# cd u . /usr/src/app
+[?2004l
+[?2004h]0;root@667346d4e9dc: /usr/src/approot@667346d4e9dc:/usr/src/app# [7mtouch /usr/src/app/index.js[27mtouch /usr/src/app/index.js[13P[6P[1@t[1@o[1@u[1@c[1@h[1@ [1@.[1@/
+[?2004l
+[?2004h]0;root@667346d4e9dc: /usr/src/approot@667346d4e9dc:/usr/src/app# ls
+[?2004l
+index.js
+[?2004h]0;root@667346d4e9dc: /usr/src/approot@667346d4e9dc:/usr/src/app# exit
+[?2004l
+exit
+[1m[7m%[27m[1m[0m                                                                                                                                                           
+ 
+
+[0m[27m[24m[Jnhanchau@192 part12 % [K[?2004heeie exit[?2004l
+
+
+Script done on Fri Aug  1 01:31:08 2025
