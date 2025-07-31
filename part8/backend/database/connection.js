@@ -15,11 +15,13 @@ const seedDatabase = async () => {
   try {
     const Author = require("../models/Author");
     const Book = require("../models/Book");
+    const User = require("../models/User");
     const { initialAuthors, initialBooks } = require("../data/seedData");
     
     // Clear existing data
     await Author.deleteMany({});
     await Book.deleteMany({});
+    await User.deleteMany({});
     console.log("🗑️  Cleared existing data");
     
     // Insert initial authors
@@ -40,6 +42,14 @@ const seedDatabase = async () => {
     
     await Book.insertMany(booksWithAuthorIds);
     console.log("📖 Seeded initial book data");
+    
+    // Create a test user
+    const testUser = new User({
+      username: "testuser",
+      favoriteGenre: "refactoring",
+    });
+    await testUser.save();
+    console.log("👤 Created test user");
     
   } catch (error) {
     console.error("❌ Database seeding failed:", error.message);

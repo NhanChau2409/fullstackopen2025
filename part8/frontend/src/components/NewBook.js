@@ -3,7 +3,7 @@ import { useMutation } from "@apollo/client";
 import { ADD_BOOK, ALL_BOOKS } from "../queries/books";
 import { ALL_AUTHORS } from "../queries/authors";
 
-const BookForm = ({ isVisible }) => {
+const BookForm = ({ isVisible, onError }) => {
   const [bookData, setBookData] = useState({
     title: "",
     author: "",
@@ -14,6 +14,20 @@ const BookForm = ({ isVisible }) => {
 
   const [addNewBook] = useMutation(ADD_BOOK, {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    onError: (error) => {
+      onError(error.graphQLErrors[0]?.message || "Failed to add book");
+    },
+    onCompleted: () => {
+      // Reset form on success
+      setBookData({
+        title: "",
+        author: "",
+        published: "",
+      });
+      setCurrentGenre("");
+      setGenreList([]);
+      onError("Book added successfully!");
+    },
   });
 
   if (!isVisible) {
@@ -30,6 +44,11 @@ const BookForm = ({ isVisible }) => {
   const handleFormSubmission = async (event) => {
     event.preventDefault();
 
+    if (genreList.length === 0) {
+      onError("At least one genre is required");
+      return;
+    }
+
     try {
       await addNewBook({
         variables: {
@@ -39,17 +58,8 @@ const BookForm = ({ isVisible }) => {
           genres: genreList,
         },
       });
-
-      // Reset form
-      setBookData({
-        title: "",
-        author: "",
-        published: "",
-      });
-      setCurrentGenre("");
-      setGenreList([]);
     } catch (error) {
-      console.error("Error adding book:", error);
+      // Error is handled by onError callback
     }
   };
 
@@ -140,7 +150,7 @@ const BookForm = ({ isVisible }) => {
 
         {renderGenreSection()}
 
-        <button type="submit" className="submit-button">
+        <button type="submit" className="submit-button" disabled={genreList.length === 0}>
           Add Book to Library
         </button>
       </form>

@@ -5,7 +5,7 @@ import Select from "react-select";
 
 const AuthorList = ({ isVisible, onError }) => {
   const { data } = useQuery(ALL_AUTHORS);
-  const authorData = data?.allAuthors || [];
+  const authorData = useMemo(() => data?.allAuthors || [], [data?.allAuthors]);
   
   const [birthYear, setBirthYear] = useState("");
   const [selectedAuthor, setSelectedAuthor] = useState(null);
@@ -63,7 +63,7 @@ const AuthorList = ({ isVisible, onError }) => {
       </thead>
       <tbody>
         {authorData.map((author) => (
-          <tr key={author.name}>
+          <tr key={author.id}>
             <td>{author.name}</td>
             <td>{author.born || "Unknown"}</td>
             <td>{author.bookCount}</td>

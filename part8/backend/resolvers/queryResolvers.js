@@ -1,24 +1,48 @@
 const Book = require("../models/Book");
 const Author = require("../models/Author");
-const { initialAuthors, initialBooks } = require("../data/seedData");
+const { GraphQLError } = require("graphql");
 
 const queryResolvers = {
   dummy: () => 0,
   
-  authorCount: () => initialAuthors.length,
+  authorCount: async () => {
+    try {
+      return await Author.countDocuments();
+    } catch (error) {
+      console.error("Error counting authors:", error);
+      throw new GraphQLError("Failed to count authors", {
+        extensions: { code: "INTERNAL_SERVER_ERROR" },
+      });
+    }
+  },
   
-  bookCount: () => initialBooks.length,
+  bookCount: async () => {
+    try {
+      return await Book.countDocuments();
+    } catch (error) {
+      console.error("Error counting books:", error);
+      throw new GraphQLError("Failed to count books", {
+        extensions: { code: "INTERNAL_SERVER_ERROR" },
+      });
+    }
+  },
   
   allBooks: async (_root, args) => {
     try {
       let query = {};
       
       if (args.author && args.genre) {
-        const authorId = await Author.findOne({ name: args.author }).select("_id");
-        query = { author: authorId, genres: args.genre };
+        const author = await Author.findOne({ name: args.author });
+        if (!author) {
+          return [];
+        }
+        query = { author: author._id, genres: args.genre };
       } else if (args.author) {
-        const authorId = await Author.findOne({ name: args.author }).select("_id");
-        query = { author: authorId };
+        const author = await Author.findOne({ name: args.author });
+        if (!author) {
+          return [];
+        }
+        query = { author: author._id };
       } else if (args.genre) {
         query = { genres: args.genre };
       }
@@ -26,34 +50,58 @@ const queryResolvers = {
       return await Book.find(query).populate("author");
     } catch (error) {
       console.error("Error fetching books:", error);
-      throw new Error("Failed to fetch books");
+      throw new GraphQLError("Failed to fetch books", {
+        extensions: { code: "INTERNAL_SERVER_ERROR" },
+      });
     }
   },
   
   allAuthors: async () => {
     try {
-      const bookCounts = new Map();
-      
-      // Count books per author
-      initialBooks.forEach((book) => {
-        const currentCount = bookCounts.get(book.author) || 0;
-        bookCounts.set(book.author, currentCount + 1);
-      });
-      
-      // Map authors with their book counts
-      return initialAuthors.map((author) => ({
-        name: author.name,
-        bookCount: bookCounts.get(author.name) || 0,
-        born: author.born,
-      }));
+      const authors = await Author.find({});
+      const authorsWithBookCount = await Promise.all(
+        authors.map(async (author) => {
+          const bookCount = await Book.countDocuments({ author: author._id });
+          return {
+            name: author.name,
+            bookCount,
+            born: author.born,
+          };
+        })
+      );
+      return authorsWithBookCount;
     } catch (error) {
       console.error("Error fetching authors:", error);
-      throw new Error("Failed to fetch authors");
+      throw new GraphQLError("Failed to fetch authors", {
+        extensions: { code: "INTERNAL_SERVER_ERROR" },
+      });
     }
   },
   
-  findAuthor: (_root, args) => {
-    return initialAuthors.find((author) => author.name === args.name);
+  findAuthor: async (_root, args) => {
+    try {
+      const author = await Author.findOne({ name: args.name });
+      if (!author) {
+        throw new GraphQLError("Author not found", {
+          extensions: { code: "NOT_FOUND" },
+        });
+      }
+      
+      const bookCount = await Book.countDocuments({ author: author._id });
+      return {
+        name: author.name,
+        bookCount,
+        born: author.born,
+      };
+    } catch (error) {
+      if (error instanceof GraphQLError) {
+        throw error;
+      }
+      console.error("Error finding author:", error);
+      throw new GraphQLError("Failed to find author", {
+        extensions: { code: "INTERNAL_SERVER_ERROR" },
+      });
+    }
   },
   
   me: (_root, _args, context) => {

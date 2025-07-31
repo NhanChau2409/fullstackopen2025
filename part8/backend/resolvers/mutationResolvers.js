@@ -3,64 +3,115 @@ const Author = require("../models/Author");
 const User = require("../models/User");
 const { GraphQLError } = require("graphql");
 const jwt = require("jsonwebtoken");
-const { initialAuthors } = require("../data/seedData");
 const config = require("../config");
 
 const mutationResolvers = {
-  addBook: async (_root, args) => {
+  addBook: async (_root, args, context) => {
+    if (!context.currentUser) {
+      throw new GraphQLError("Not authenticated", {
+        extensions: { code: "UNAUTHENTICATED" },
+      });
+    }
+
     try {
       // Find or create author
-      let authorId = await Author.findOne({ name: args.author }).select("_id");
+      let author = await Author.findOne({ name: args.author });
       
-      if (!authorId) {
-        const newAuthor = new Author({
+      if (!author) {
+        author = new Author({
           name: args.author,
         });
-        const savedAuthor = await newAuthor.save();
-        authorId = savedAuthor._id.valueOf();
+        await author.save();
       }
       
       // Create and save the new book
       const newBook = new Book({
-        ...args,
-        author: authorId.valueOf(),
+        title: args.title,
+        published: args.published,
+        author: author._id,
+        genres: args.genres,
       });
       
-      await newBook.save();
+      const savedBook = await newBook.save();
       
       // Return the book with populated author
-      const addedBook = await Book.findOne({ title: args.title }).populate("author");
+      const addedBook = await Book.findById(savedBook._id).populate("author");
       return addedBook;
     } catch (error) {
       console.error("Error adding book:", error);
+      
+      if (error.name === 'ValidationError') {
+        throw new GraphQLError("Validation error", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            error: error.message,
+          },
+        });
+      }
+      
+      if (error.code === 11000) {
+        throw new GraphQLError("Book title must be unique", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            error: "Book with this title already exists",
+          },
+        });
+      }
+      
       throw new GraphQLError("Failed to save book", {
         extensions: {
-          code: "BAD_USER_INPUT",
-          invalidArgs: JSON.stringify(args),
+          code: "INTERNAL_SERVER_ERROR",
           error: error.message,
         },
       });
     }
   },
   
-  editAuthor: async (_root, args) => {
+  editAuthor: async (_root, args, context) => {
+    if (!context.currentUser) {
+      throw new GraphQLError("Not authenticated", {
+        extensions: { code: "UNAUTHENTICATED" },
+      });
+    }
+
     try {
-      const authorIndex = initialAuthors.findIndex(
-        (author) => author.name === args.name
-      );
+      const author = await Author.findOne({ name: args.name });
       
-      if (authorIndex >= 0) {
-        initialAuthors[authorIndex].born = args.setBornTo;
-        return initialAuthors[authorIndex];
+      if (!author) {
+        throw new GraphQLError("Author not found", {
+          extensions: { code: "NOT_FOUND" },
+        });
       }
       
-      return null;
+      author.born = args.setBornTo;
+      await author.save();
+      
+      const bookCount = await Book.countDocuments({ author: author._id });
+      return {
+        name: author.name,
+        bookCount,
+        born: author.born,
+      };
     } catch (error) {
       console.error("Error editing author:", error);
+      
+      if (error instanceof GraphQLError) {
+        throw error;
+      }
+      
+      if (error.name === 'ValidationError') {
+        throw new GraphQLError("Validation error", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            error: error.message,
+          },
+        });
+      }
+      
       throw new GraphQLError("Failed to edit author", {
         extensions: {
-          code: "BAD_USER_INPUT",
-          invalidArgs: args,
+          code: "INTERNAL_SERVER_ERROR",
+          error: error.message,
         },
       });
     }
@@ -70,17 +121,35 @@ const mutationResolvers = {
     try {
       const newUser = new User({
         username: args.username,
-        favoriteGenres: [],
+        favoriteGenre: args.favoriteGenre,
       });
       
       const savedUser = await newUser.save();
       return savedUser;
     } catch (error) {
       console.error("Error creating user:", error);
+      
+      if (error.name === 'ValidationError') {
+        throw new GraphQLError("Validation error", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            error: error.message,
+          },
+        });
+      }
+      
+      if (error.code === 11000) {
+        throw new GraphQLError("Username must be unique", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            error: "Username already exists",
+          },
+        });
+      }
+      
       throw new GraphQLError("Failed to create user", {
         extensions: {
-          code: "BAD_USER_INPUT",
-          invalidArgs: args.username,
+          code: "INTERNAL_SERVER_ERROR",
           error: error.message,
         },
       });
@@ -99,6 +168,16 @@ const mutationResolvers = {
         });
       }
       
+      // For now, assume all users have the same hardcoded password
+      const correctPassword = "secret";
+      if (args.password !== correctPassword) {
+        throw new GraphQLError("Invalid credentials", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+          },
+        });
+      }
+      
       const userForToken = {
         username: user.username,
         id: user._id,
@@ -110,10 +189,13 @@ const mutationResolvers = {
         value: token,
       };
     } catch (error) {
+      if (error instanceof GraphQLError) {
+        throw error;
+      }
       console.error("Error during login:", error);
       throw new GraphQLError("Login failed", {
         extensions: {
-          code: "BAD_USER_INPUT",
+          code: "INTERNAL_SERVER_ERROR",
         },
       });
     }

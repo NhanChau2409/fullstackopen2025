@@ -1,7 +1,7 @@
 const typeDefinitions = `
   type User {
     username: String!
-    favoriteGenres: [String]!
+    favoriteGenre: String!
     id: ID!
   }
 
@@ -13,7 +13,8 @@ const typeDefinitions = `
     title: String!
     author: Author!
     published: Int!
-    genres: [String!]
+    genres: [String!]!
+    id: ID!
   }
 
   type Author {
@@ -37,14 +38,15 @@ const typeDefinitions = `
       title: String!
       author: String!
       published: Int!
-      genres: [String!]
-    ): Book
+      genres: [String!]!
+    ): Book!
     editAuthor(
       name: String!
       setBornTo: Int!
     ): Author
     createUser(
       username: String!
+      favoriteGenre: String!
     ): User
     login(
       username: String!

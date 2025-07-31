@@ -16,8 +16,18 @@ const schema = new mongoose.Schema({
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Author",
+    required: true,
   },
-  genres: [{ type: String }],
+  genres: {
+    type: [String],
+    required: true,
+    validate: {
+      validator: function(v) {
+        return v && v.length > 0;
+      },
+      message: 'Genres cannot be empty'
+    }
+  },
 });
 
 // schema.plugin(uniqueValidator);
